@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RFID Lock Times</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        table, th, td {
+            border: 1px solid black;
+        }
+        th, td {
+            padding: 10px;
+            text-align: left;
+        }
+    </style>
+</head>
+<body>
+    <h1>RFID Lock Times</h1>
+    <table id="logTable">
+        <tr>
+            <th>Action</th>
+            <th>Time</th>
+        </tr>
+    </table>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.1/firebase-app.js";
+        import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.1/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyBN4nZ3BiQ5OAu85r1mjtaDerD-3W47beU",
+            authDomain: "rfid-door-lock-bci-93ae0.firebaseapp.com",
+            projectId: "rfid-door-lock-bci-93ae0",
+            storageBucket: "rfid-door-lock-bci-93ae0.appspot.com",
+            messagingSenderId: "630023259175",
+            appId: "1:630023259175:web:b17d0539153e5706cd3a02",
+            measurementId: "G-EYK6RKEDQM"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        async function displayLogs() {
+            const querySnapshot = await getDocs(collection(db, "rfidLogs"));
+            const logs = querySnapshot.docs.map(doc => doc.data());
+            const logTable = document.getElementById('logTable');
+            logTable.innerHTML = `
+                <tr>
+                    <th>Action</th>
+                    <th>Time</th>
+                </tr>
+            `;
+            logs.forEach(log => {
+                const row = logTable.insertRow();
+                const cell1 = row.insertCell(0);
+                const cell2 = row.insertCell(1);
+                cell1.textContent = log.action;
+                cell2.textContent = log.time;
+            });
+        }
+
+        // Display logs on page load
+        window.onload = displayLogs;
+    </script>
+</body>
+</html>
